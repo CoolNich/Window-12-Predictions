@@ -1,0 +1,13 @@
+linux-image-amd64
+live-boot
+systemd-sysv
+libpam-systemd
+dbus-user-session
+cage
+chromium
+fonts-noto-core
+fonts-noto-color-emoji
+curl
+ca-certificates
+libgomp1
+mesa-vulkan-drivers

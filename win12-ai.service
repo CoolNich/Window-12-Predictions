@@ -1,0 +1,11 @@
+[Unit]
+Description=Windows 12 local AI and desktop server
+After=network.target
+
+[Service]
+DynamicUser=yes
+ExecStart=/usr/local/bin/llama-server -m /opt/win12/model.gguf --path /opt/win12/web --host 127.0.0.1 --port 8080 -c 2048
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

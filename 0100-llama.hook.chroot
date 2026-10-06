@@ -1,0 +1,16 @@
+#!/bin/sh
+# Build llama.cpp (static, generic x86-64), then remove the toolchain to keep the ISO small.
+set -e
+apt-get install -y --no-install-recommends build-essential cmake git ca-certificates
+git clone --depth 1 https://github.com/ggml-org/llama.cpp /tmp/llama
+cmake -S /tmp/llama -B /tmp/b -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF \
+  -DGGML_NATIVE=OFF -DGGML_OPENMP=OFF -DLLAMA_CURL=OFF \
+  -DLLAMA_BUILD_TESTS=OFF -DLLAMA_BUILD_EXAMPLES=OFF
+cmake --build /tmp/b --target llama-server -j"$(nproc)"
+install /tmp/b/bin/llama-server /usr/local/bin/llama-server
+rm -rf /tmp/llama /tmp/b
+apt-mark manual libstdc++6 libgcc-s1 || true
+apt-get purge -y build-essential cmake git
+apt-get autoremove -y --purge
+apt-get clean
+systemctl enable win12-ai.service

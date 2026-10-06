@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Windows 12 (concept)</title>
+<style>
+:root{--bg:#e9eefb;--glass:rgba(255,255,255,.62);--text:#16181d;--sub:#5b6270;--line:rgba(0,0,0,.1);--acc:#2f6bff;--win:#fbfcff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--glass:rgba(32,35,44,.66);--text:#eef0f5;--sub:#9aa2b2;--line:rgba(255,255,255,.12);--win:#23262f}}
+:root[data-theme="dark"]{--glass:rgba(32,35,44,.66);--text:#eef0f5;--sub:#9aa2b2;--line:rgba(255,255,255,.12);--win:#23262f}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;overflow:hidden;font-family:"Segoe UI",Inter,system-ui,sans-serif;color:var(--text);background:#1b2a5a}
+:root{padding-top:env(safe-area-inset-top,0px)}
+#desk{position:absolute;inset:0;background:radial-gradient(900px 600px at 20% 25%,#5aa0ff 0,transparent 60%),radial-gradient(800px 600px at 80% 70%,#a56bff 0,transparent 60%),linear-gradient(135deg,#1b2a5a,#3b2a7a)}
+.icons{position:absolute;top:14px;left:14px;display:grid;gap:8px}
+.ico{width:78px;padding:8px 4px;text-align:center;color:#fff;font-size:12px;border-radius:8px;cursor:default;text-shadow:0 1px 3px #0008;background:none;border:0}
+.ico:hover,.ico:focus-visible{background:#fff3;outline:none}
+.ico b{display:block;font-size:30px;font-weight:400;margin-bottom:2px}
+.win{position:absolute;min-width:300px;background:var(--win);border-radius:12px;box-shadow:0 18px 50px #0006,0 0 0 1px var(--line);display:flex;flex-direction:column;overflow:hidden}
+.win .bar{display:flex;align-items:center;height:38px;padding-left:14px;background:var(--glass);backdrop-filter:blur(20px);cursor:move;font-size:13px;user-select:none;touch-action:none}
+.win .bar span{flex:1}
+.win .bar button{width:42px;height:38px;border:0;background:none;color:var(--text);font-size:14px;cursor:pointer}
+.win .bar button:hover{background:var(--line)}.win .bar .x:hover{background:#e5384a;color:#fff}
+.body{padding:14px;flex:1;overflow:auto;font-size:14px}
+textarea{width:100%;height:100%;min-height:200px;border:0;outline:0;resize:none;background:transparent;color:var(--text);font:15px/1.5 Consolas,monospace}
+.calc{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.calc .out{grid-column:1/-1;text-align:right;font-size:30px;padding:8px 4px 12px;min-height:56px}
+.calc button,.set button{padding:12px;border:0;border-radius:8px;background:var(--line);color:var(--text);font-size:16px;cursor:pointer}
+.calc button:hover{background:var(--acc);color:#fff}
+.file{display:flex;gap:10px;padding:9px 8px;border-radius:8px}.file:hover{background:var(--line)}
+.row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.tb{position:absolute;left:50%;bottom:calc(10px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);display:flex;gap:4px;padding:6px;border-radius:16px;background:var(--glass);backdrop-filter:blur(24px);box-shadow:0 0 0 1px var(--line),0 10px 30px #0004;max-width:96vw}
+.tb button{width:46px;height:46px;border:0;border-radius:10px;background:none;font-size:22px;cursor:pointer;position:relative;color:var(--text)}
+.tb button:hover{background:var(--line)}
+.tb button.on::after{content:"";position:absolute;left:14px;right:14px;bottom:2px;height:3px;border-radius:2px;background:var(--acc)}
+.clock{position:absolute;right:14px;bottom:calc(14px + env(safe-area-inset-bottom,0px));color:#fff;text-align:right;font-size:12px;text-shadow:0 1px 3px #0008}
+#start{position:absolute;left:50%;bottom:calc(76px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);width:min(560px,94vw);padding:20px;border-radius:18px;background:var(--glass);backdrop-filter:blur(30px);box-shadow:0 0 0 1px var(--line),0 20px 60px #0005;display:none}
+#start.show{display:block}
+#start input{width:100%;padding:11px 14px;border-radius:20px;border:1px solid var(--line);background:var(--win);color:var(--text);font-size:14px;margin-bottom:16px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.grid button{border:0;background:none;color:var(--text);padding:12px 4px;border-radius:10px;cursor:pointer;font-size:12px}
+.grid button:hover{background:var(--line)}.grid b{display:block;font-size:28px;font-weight:400}
+.ai{margin-top:14px;padding:12px 14px;border-radius:12px;background:var(--win);font-size:13px;color:var(--sub)}
+@media (max-width:600px){.win{max-width:94vw}}
+.chat{display:flex;flex-direction:column;gap:8px;height:100%}.log{flex:1;overflow:auto;display:flex;flex-direction:column;gap:8px}.m{padding:9px 12px;border-radius:12px;max-width:85%;white-space:pre-wrap}.u{align-self:flex-end;background:var(--acc);color:#fff}.a{background:var(--line)}.send{display:flex;gap:6px}.send input{flex:1;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--win);color:var(--text)}.send button,.nb button{padding:8px 12px;border:0;border-radius:8px;background:var(--acc);color:#fff;cursor:pointer}.nb{display:flex;gap:6px;margin-bottom:8px}</style></head>
+<body>
+<div id="desk">
+  <div class="icons">
+    <button class="ico" data-app="files"><b>📁</b>Files</button>
+    <button class="ico" data-app="notes"><b>📝</b>Notes</button>
+    <button class="ico" data-app="calc"><b>🧮</b>Calculator</button>
+    <button class="ico" data-app="chat"><b>✨</b>Assistant</button>
+    <button class="ico" data-app="set"><b>⚙️</b>Settings</button>
+  </div>
+  <div id="start">
+    <input id="q" placeholder="Search apps, files and settings" aria-label="Search">
+    <div class="grid" id="apps"></div>
+    <div class="ai">Local AI is built in. Try the Assistant, or use Summarize in Notes.</div>
+  </div>
+  <div class="tb" id="tb"><button id="sb" title="Start" aria-label="Start">⊞</button></div>
+  <div class="clock" id="clk"></div>
+</div>
+<script>
+async function ai(msgs){const r=await fetch("/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:msgs,max_tokens:400})});if(!r.ok)throw new Error("AI server not ready");return (await r.json()).choices[0].message.content}
+const APPS={
+ files:{n:"Files",i:"📁",w:420,h:300,r:b=>b.innerHTML=["Documents","Downloads","Pictures","Music","Projects"].map(f=>`<div class="file"><span>📁</span>${f}</div>`).join("")},
+ notes:{n:"Notes",i:"📝",w:440,h:340,r:b=>{b.innerHTML='<div class="nb"><button data-m="Summarize this text briefly:">Summarize</button><button data-m="Fix spelling and grammar, return only the corrected text:">Fix writing</button></div><textarea placeholder="Start typing..." aria-label="Note"></textarea>';const t=b.querySelector("textarea");b.querySelectorAll("[data-m]").forEach(x=>x.onclick=async()=>{if(!t.value.trim())return;const o=x.textContent;x.textContent="Thinking...";try{t.value=await ai([{role:"user",content:x.dataset.m+"\n\n"+t.value}])}catch(e){t.value+="\n\n["+e.message+"]"}x.textContent=o})}},
+ chat:{n:"Assistant",i:"✨",w:400,h:430,r:b=>{b.innerHTML='<div class="chat"><div class="log"><div class="m a">Hi! I run on this computer, with no internet needed. Ask me anything.</div></div><div class="send"><input placeholder="Ask the assistant" aria-label="Message"><button>Send</button></div></div>';const log=b.querySelector(".log"),inp=b.querySelector("input"),h=[];const add=(c,t)=>{const d=document.createElement("div");d.className="m "+c;d.textContent=t;log.appendChild(d);log.scrollTop=1e9;return d};const go=async()=>{const q=inp.value.trim();if(!q)return;inp.value="";add("u",q);h.push({role:"user",content:q});const d=add("a","Thinking...");try{const a=await ai(h.slice(-8));h.push({role:"assistant",content:a});d.textContent=a}catch(e){d.textContent=e.message+". Wait a few seconds and try again."}};b.querySelector("button").onclick=go;inp.onkeydown=e=>{if(e.key=="Enter")go()}}},
+ calc:{n:"Calculator",i:"🧮",w:300,h:400,r:b=>{
+  b.innerHTML='<div class="calc"><div class="out">0</div></div>';const g=b.firstChild,o=g.firstChild;let e="";
+  "C ( ) / 7 8 9 * 4 5 6 - 1 2 3 + 0 . ⌫ =".split(" ").forEach(k=>{const x=document.createElement("button");x.textContent=k;x.onclick=()=>{
+   if(k=="C")e="";else if(k=="⌫")e=e.slice(0,-1);else if(k=="="){try{e=String(Function('"use strict";return ('+(e||0)+')')())}catch{e="Error"}}else{if(e=="Error")e="";e+=k}
+   o.textContent=e||"0"};g.appendChild(x)})}},
+ set:{n:"Settings",i:"⚙️",w:380,h:260,r:b=>{
+  b.className+=" set";b.innerHTML='<div class="row">Theme<button id="th">Toggle dark mode</button></div><div class="row">Taskbar<span>Centered</span></div><div class="row">Version<span>Windows 12 (concept)</span></div>';
+  b.querySelector("#th").onclick=()=>{const d=document.documentElement,dark=getComputedStyle(d).getPropertyValue("--win").trim()=="#23262f";d.dataset.theme=dark?"light":"dark"}}}
+};
+const tb=document.getElementById("tb"),desk=document.getElementById("desk"),st=document.getElementById("start");
+let z=10,open={};
+function launch(id){
+ st.classList.remove("show");
+ if(open[id]){open[id].win.style.zIndex=++z;open[id].win.hidden=false;return}
+ const a=APPS[id],w=document.createElement("div");w.className="win";
+ const n=Object.keys(open).length;
+ w.style.cssText=`width:${a.w}px;height:${a.h}px;left:${Math.max(8,Math.min(120+n*34,innerWidth-a.w-8))}px;top:${60+n*30}px;z-index:${++z}`;
+ w.innerHTML=`<div class="bar"><span>${a.i} ${a.n}</span><button class="m" aria-label="Minimize">–</button><button class="x" aria-label="Close">✕</button></div><div class="body"></div>`;
+ a.r(w.querySelector(".body"));desk.appendChild(w);
+ const t=document.createElement("button");t.textContent=a.i;t.title=a.n;t.className="on";tb.appendChild(t);
+ open[id]={win:w,t};
+ t.onclick=()=>{w.hidden=!w.hidden;if(!w.hidden)w.style.zIndex=++z};
+ w.querySelector(".m").onclick=()=>w.hidden=true;
+ w.querySelector(".x").onclick=()=>{w.remove();t.remove();delete open[id]};
+ w.addEventListener("pointerdown",()=>w.style.zIndex=++z);
+ const bar=w.querySelector(".bar");
+ bar.onpointerdown=e=>{if(e.target.tagName=="BUTTON")return;const ox=e.clientX-w.offsetLeft,oy=e.clientY-w.offsetTop;bar.setPointerCapture(e.pointerId);
+  bar.onpointermove=m=>{w.style.left=Math.max(-w.offsetWidth+60,m.clientX-ox)+"px";w.style.top=Math.max(0,m.clientY-oy)+"px"};
+  bar.onpointerup=()=>bar.onpointermove=null};
+}
+document.querySelectorAll("[data-app]").forEach(b=>b.ondblclick=b.onclick=()=>launch(b.dataset.app));
+const grid=document.getElementById("apps");
+Object.entries(APPS).forEach(([id,a])=>{const b=document.createElement("button");b.dataset.n=a.n.toLowerCase();b.innerHTML=`<b>${a.i}</b>${a.n}`;b.onclick=()=>launch(id);grid.appendChild(b)});
+document.getElementById("sb").onclick=e=>{e.stopPropagation();st.classList.toggle("show");document.getElementById("q").focus()};
+document.getElementById("q").oninput=e=>[...grid.children].forEach(b=>b.hidden=!b.dataset.n.includes(e.target.value.toLowerCase()));
+desk.addEventListener("pointerdown",e=>{if(!st.contains(e.target)&&e.target.id!="sb")st.classList.remove("show")});
+const clk=document.getElementById("clk");
+function tick(){const d=new Date();clk.innerHTML=d.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})+"<br>"+d.toLocaleDateString()}
+tick();setInterval(tick,10000);
+</script>
+</body></html>

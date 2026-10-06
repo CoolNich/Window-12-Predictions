@@ -1,0 +1,23 @@
+name: Build ISO
+on:
+  push: {branches: [main]}
+  workflow_dispatch: {}
+permissions: {contents: write}
+env:
+  MODEL_URL: https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF/resolve/main/qwen2.5-1.5b-instruct-q4_k_m.gguf
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download AI model
+        run: |
+          curl -L --fail -o config/includes.chroot/opt/win12/model.gguf "$MODEL_URL"
+          ls -lh config/includes.chroot/opt/win12/
+      - name: Build ISO in Debian container
+        run: docker run --rm --privileged -v "$PWD":/src debian:bookworm bash /src/build.sh
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: build-${{ github.run_number }}
+          name: Windows 12 OS build ${{ github.run_number }}
+          files: windows12-os.iso
